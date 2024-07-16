@@ -1,3 +1,4 @@
+from collections import deque
 class Schedule:
     def __init__(self):
         self.schedule = {
@@ -15,7 +16,7 @@ class Schedule:
         # self.thu = []
         # self.fri = []
 
-        self.sectsToAdd = []
+        self.sectsToAdd = deque()
 
     '''
     Add a section to the current schedule. If there is a clash
@@ -24,7 +25,7 @@ class Schedule:
     Arguments:
         section: The section to add
     Returns:
-        True if there was no clash, False if there was
+        True if there was a clash, False if there wasn't
     '''
     def addSection(self, section) -> bool:
         removed = False
@@ -36,6 +37,7 @@ class Schedule:
 
                 while i < len(self.schedule[day]) and section.time[1] > self.schedule[day][i].time[0]: 
                     self.sectsToAdd.append(self.schedule[day][i])
+                    self.schedule[day][i].removeTiming(self.schedule[day][i].time[0], self.schedule[day][i].time[1])
                     self.removeSection(self.schedule[day][i])
                     removed = True
 
