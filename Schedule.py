@@ -29,7 +29,7 @@ class Schedule:
     '''
     def addSection(self, section) -> bool:
         removed = False
-        for day in section.days:
+        for day in section.time[2]:
             added = False
             for i in range(len(self.schedule[day])):
                 _, end = self.schedule[day][i].time
@@ -56,5 +56,25 @@ class Schedule:
     remove the section from each day it is on.
     '''    
     def removeSection(self, section):
-        for day in section.days:
+        for day in section.time[2]:
             self.schedule[day].remove(section)
+
+    '''
+    Reset all the timesLeft for all the courses on the schedule.
+    Needed because when adding a section to the schedule, it 
+    changes timesLeft, but after a section is added, all times
+    should become eligible again. 
+    '''
+    def resetAllTimings(self):
+        for day in self.schedule.keys():
+            for section in self.schedule[day]:
+                section.resetTimings()
+
+    #print the schedule 
+    def __str__(self):
+        for day in self.schedule.keys():
+            print(day)
+            for section in self.schedule[day]:
+                print(section)
+            print()
+    

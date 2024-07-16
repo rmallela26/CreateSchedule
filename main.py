@@ -31,10 +31,27 @@ def main():
 
     for section in sections:
         queue = deque()
-        populateSchedule(schedule, section, queue)
+        schedule = populateSchedule(schedule, section, queue)
+        if queue: schedule = finalizeSection()
+
+        if schedule == None:
+            print("Schedule is impossible to fit")
+            print("Tried to fit " + sections)
+            print("Failed at " + section)
+        else:
+            #reset all timesLeft for courses in schedule
+            schedule.resetAllTimings()
+
+    print(schedule)
 
         
-def populateSchedule(parentSchedule, section, queue):
+def populateSchedule(parentSchedule, section, queue) -> Schedule:
+    #add schedules to the local queue. If we get to the end
+    #add the stuff on the localQueue to queue. Otherwise if 
+    #gets quit somewhere in the middle, then we don't add
+    #anything that was on the localQueue to queue (because
+    #the class was fit)
+    localQueue = deque()
     for time in section.timesLeft:
         sect = copy.deepcopy(section)
         sect.timesLeft = []
@@ -45,27 +62,29 @@ def populateSchedule(parentSchedule, section, queue):
             if len(currSched.sectsToAdd) == 0:
                 return currSched
             else:
-
-
-            parentSchedule = currSched
-            queue = deque() #empty queue
-            break
+                queue.append(currSched)
+                return None
         else:
-            queue.append(currSched)
+            localQueue.append(currSched)
 
-    finalizeSection(queue)
+    for item in localQueue:
+        queue.append(item)
+    
+    return None
 
-def finalizeSection(queue):
+def finalizeSection(queue) -> Schedule:
     while queue:
         currSched = queue.popleft()
         
-        for sect in currSched.sectsToAdd:
+        while currSched.sectsToAdd:
+            sect = currSched.sectsToAdd.popleft()
             if len(sect.timesLeft) == 0:
-                #schedule not possible
+                #this schedule not possible
                 continue
             else:
-                populateSchedule(currSched, sect, queue)
-
+                candidate = populateSchedule(currSched, sect, queue)
+                if candidate: return candidate
+    return None
 
 '''
 You have 10 sections (10 classes to fit). For each section:
