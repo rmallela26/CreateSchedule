@@ -43,7 +43,7 @@ def main():
     for section in sections:
         queue = deque()
         schedule = populateSchedule(schedule, section, queue)
-        if queue: schedule = finalizeSection()
+        if queue: schedule = finalizeSection(queue)
 
         if schedule == None:
             print("Schedule is impossible to fit")
