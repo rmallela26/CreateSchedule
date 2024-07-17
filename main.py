@@ -24,16 +24,22 @@ def main():
         for line in data:
             if line == "" or line == "\n": break
             line = eval(line)
-            print(line[0])
+            # print(line[0])
 
         # for i in range(len(classes)):
             #fetch data for each class
             name = line[0]
             duration = line[1]
-            times = line[2] #CONVERT times to set, GETS RID OF
-            #DUPLICATE TIMES
+            oldTimes = line[2]
 
-            #create the section
+            #get rid of duplicates
+            times = []
+            times.append(oldTimes[0])
+            for i in range(1, len(oldTimes)):
+                if oldTimes[i] == times[-1]: continue
+                times.append(oldTimes[i])
+
+            times = blockTimes(times, 10, 24, False, ['tue', 'thu'])
             sect = Section(name, times, duration)
             sections.append(sect)
 
@@ -47,8 +53,9 @@ def main():
 
         if schedule == None:
             print("Schedule is impossible to fit")
-            print("Tried to fit " + sections)
-            print("Failed at " + section)
+            print("Tried to fit " + str(sections))
+            print("Failed at " + str(section))
+            return
         else:
             #reset all timesLeft for courses in schedule
             schedule.resetAllTimings()
@@ -96,6 +103,47 @@ def finalizeSection(queue) -> Schedule:
                 candidate = populateSchedule(currSched, sect, queue)
                 if candidate: return candidate
     return None
+
+'''
+Remove certain times from the array of potential times 
+we can put things. This is called if the user pre picks
+some classes on their own, and then calls fit. It is also
+so the user can say they don't want classes after or before
+or during a certain time.
+Arguments:
+    times: The array of potential times
+    startTime: The start of time range
+    endTime: The end of time range
+    internal: Boolean that determines whether the times between
+            or outside internal,external are the ones to block
+    days: Array of which days this applies to 
+Returns:
+    The new times array
+'''
+def blockTimes(times, startTime, endTime, internal, days) -> list:
+    newTimes = []
+    start, end = 0, 0
+    if internal:
+        start = endTime
+        end = startTime
+    else:
+        start = startTime
+        end = endTime
+
+    #for values > start and < end, add to newTimes
+    #(only applies to days in days)
+    for time in times:
+        #check if days apply
+        if not any(element in days for element in time[2]):
+            newTimes.append(time)
+            continue
+
+        if time[0] >= start and time[1] <= end:
+            newTimes.append(time)
+
+    return newTimes
+        
+
 
 main()
 

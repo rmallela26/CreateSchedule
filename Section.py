@@ -13,7 +13,7 @@ class Section:
                         #format: [start, end, ['mon', 'wed']]
 
     def removeTiming(self, time):
-        self.timesLeft.remove(time)
+        if time in self.timesLeft: self.timesLeft.remove(time)
 
     def resetTimings(self):
         self.timesLeft = self.timings[:]
