@@ -30,7 +30,8 @@ def main():
             #fetch data for each class
             name = line[0]
             duration = line[1]
-            times = line[2]
+            times = line[2] #CONVERT times to set, GETS RID OF
+            #DUPLICATE TIMES
 
             #create the section
             sect = Section(name, times, duration)
@@ -52,7 +53,7 @@ def main():
             #reset all timesLeft for courses in schedule
             schedule.resetAllTimings()
 
-    print(schedule)
+    schedule.printSchedule()
 
         
 def populateSchedule(parentSchedule, section, queue) -> Schedule:
@@ -68,7 +69,7 @@ def populateSchedule(parentSchedule, section, queue) -> Schedule:
         sect.time = time
 
         currSched = copy.deepcopy(parentSchedule)
-        if not currSched.addSection(section): 
+        if not currSched.addSection(sect): 
             if len(currSched.sectsToAdd) == 0:
                 return currSched
             else:

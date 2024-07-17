@@ -12,11 +12,12 @@ class Section:
 
                         #format: [start, end, ['mon', 'wed']]
 
-    def removeTiming(self, start, end):
-        self.timesLeft.remove([start, end])
+    def removeTiming(self, time):
+        self.timesLeft.remove(time)
 
     def resetTimings(self):
         self.timesLeft = self.timings[:]
 
     def __str__(self):
-        print("[" + self.name + "]: " + self.time)
+        return (f"[{self.name}]: {self.time}")
+        # print("[" + self.name + "]: " + self.time)

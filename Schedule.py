@@ -29,15 +29,17 @@ class Schedule:
     '''
     def addSection(self, section) -> bool:
         removed = False
+        print(section.name, section.time)
         for day in section.time[2]:
             added = False
             for i in range(len(self.schedule[day])):
-                _, end = self.schedule[day][i].time
+                _, end, _ = self.schedule[day][i].time
                 if section.time[0] > end: continue
 
                 while i < len(self.schedule[day]) and section.time[1] > self.schedule[day][i].time[0]: 
                     self.sectsToAdd.append(self.schedule[day][i])
-                    self.schedule[day][i].removeTiming(self.schedule[day][i].time[0], self.schedule[day][i].time[1])
+                    # self.schedule[day][i].removeTiming(self.schedule[day][i].time[0], self.schedule[day][i].time[1])
+                    self.schedule[day][i].removeTiming(self.schedule[day][i].time)  
                     self.removeSection(self.schedule[day][i])
                     removed = True
 
@@ -71,7 +73,7 @@ class Schedule:
                 section.resetTimings()
 
     #print the schedule 
-    def __str__(self):
+    def printSchedule(self):
         for day in self.schedule.keys():
             print(day)
             for section in self.schedule[day]:
