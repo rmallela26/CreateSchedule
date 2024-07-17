@@ -1,5 +1,5 @@
 class Section:
-    def __init__(self, name, timings, duration, days):
+    def __init__(self, name, timings, duration):
         #All times represented as military time with decimals.
         #eg 2:15 is 14.25
         self.name = name

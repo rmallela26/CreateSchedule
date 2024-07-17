@@ -3,31 +3,41 @@ from Schedule import Schedule
 from collections import deque
 
 import copy
+import csv
 
 classes = ["CIS 1200 Lecture", "CIS 1200 Recitation", 
-           "CIS 1600 Lecture", "CIS 1600 Recitation", 
-           "MEAM 2020 Lecture", "MEAM 2020 Recitation", 
+           "CIS 1600 Lecture", "CIS 1600 Recitation",  
            "ECON 0100 Lecture", "ECON 0100 Recitation", 
+           "MEAM 2020 Lecture", "MEAM 2020 Recitation",
            "WRIT 0740"]
 
 def main():
 
-    times = []
-    duration = 1
-    days = []
-
     schedule = Schedule()
     sections = []
 
-    for c in classes:
-        #fetch data for each class
+    with open('data.txt', 'r') as file:
+        # data = csv.reader(file)
+        content  = file.read().strip()
+        data = content.split('|')
+    
+        for line in data:
+            if line == "" or line == "\n": break
+            line = eval(line)
+            print(line[0])
 
-        #create the section
-        sect = Section(c, times, duration, days)
-        sections.append(sect)
+        # for i in range(len(classes)):
+            #fetch data for each class
+            name = line[0]
+            duration = line[1]
+            times = line[2]
+
+            #create the section
+            sect = Section(name, times, duration)
+            sections.append(sect)
 
     #sort by shortest time, and then longest length first
-    sections.sort(key=lambda sched: (len(sched.times), -duration))
+    sections.sort(key=lambda sect: (len(sect.timings), -duration))
 
     for section in sections:
         queue = deque()
@@ -85,6 +95,8 @@ def finalizeSection(queue) -> Schedule:
                 candidate = populateSchedule(currSched, sect, queue)
                 if candidate: return candidate
     return None
+
+main()
 
 '''
 You have 10 sections (10 classes to fit). For each section:
