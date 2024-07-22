@@ -5,10 +5,17 @@ from collections import deque
 import copy
 import random
 
+# classes = ["CIS 1200 Lecture", "CIS 1200 Recitation", 
+#            "CIS 1600 Lecture", "CIS 1600 Recitation",  
+#            "ECON 0100 Lecture", "ECON 0100 Recitation", 
+#            "MEAM 2020 Lecture", "MEAM 2020 Recitation",
+#            "WRIT 0740"]
+
 classes = ["CIS 1200 Lecture", "CIS 1200 Recitation", 
            "CIS 1600 Lecture", "CIS 1600 Recitation",  
            "ECON 0100 Lecture", "ECON 0100 Recitation", 
-           "MEAM 2020 Lecture", "MEAM 2020 Recitation",
+           "PHYS 1230 Lecture",
+           "MATH 1410 Lecture", "MATH 1410 Recitation",
            "WRIT 0740"]
 
 def main():
@@ -17,23 +24,24 @@ def main():
     sections = []
 
     with open('data.txt', 'r') as file:
-        # data = csv.reader(file)
         content  = file.read().strip()
         data = content.split('|')
     
+        #fetch data for each class
         for line in data:
             if line == "" or line == "\n": break
             line = eval(line)
             # print(line[0])
 
-        # for i in range(len(classes)):
-            #fetch data for each class
+            if line[0] not in classes: continue
+            
             name = line[0]
             duration = line[1]
             oldTimes = line[2]
 
             #get rid of duplicates
             times = []
+            oldTimes.sort(key=lambda time: (time[0], time[2][0]))
             times.append(oldTimes[0])
             for i in range(1, len(oldTimes)):
                 if oldTimes[i] == times[-1]: continue
@@ -47,7 +55,7 @@ def main():
             sect = Section(name, times, duration)
             sections.append(sect)
 
-    #sort by shortest time, and then longest length first
+    #sort by shortest time, and then longest length
     sections.sort(key=lambda sect: (len(sect.timings), -duration))
 
     for section in sections:
@@ -56,6 +64,13 @@ def main():
         if queue: schedule = finalizeSection(queue)
 
         if schedule == None:
+            #can add feature to try again ignoring constraints: 
+            #try to add back the classes that were kicked out
+            #due to a convenience constraint, and add them at 
+            #the end of the times array (so that they are 
+            #biased to be not picked). Then try to refit. 
+            #if still doesn't work, then impossible. 
+
             print("Schedule is impossible to fit")
             print("Tried to fit " + str(sections))
             print("Failed at " + str(section))

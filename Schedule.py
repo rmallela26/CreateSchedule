@@ -10,12 +10,6 @@ class Schedule:
             'fri': []
         }
 
-        # self.mon = []
-        # self.tue = []
-        # self.wed = []
-        # self.thu = []
-        # self.fri = []
-
         self.sectsToAdd = deque()
 
     '''
