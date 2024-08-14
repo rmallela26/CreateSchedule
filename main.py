@@ -5,12 +5,6 @@ from collections import deque
 import copy
 import random
 
-# classes = ["CIS 1200 Lecture", "CIS 1200 Recitation", 
-#            "CIS 1600 Lecture", "CIS 1600 Recitation",  
-#            "ECON 0100 Lecture", "ECON 0100 Recitation", 
-#            "MEAM 2020 Lecture", "MEAM 2020 Recitation",
-#            "WRIT 0740"]
-
 classes = ["CIS 1200 Lecture", "CIS 1200 Recitation", 
            "CIS 1600 Lecture", "CIS 1600 Recitation",  
            "ECON 0100 Lecture", "ECON 0100 Recitation", 
@@ -47,6 +41,7 @@ def main():
                 if oldTimes[i] == times[-1]: continue
                 times.append(oldTimes[i])
 
+            #set classes to not be before 10am on tue, thu
             times = blockTimes(times, 10, 24, False, ['tue', 'thu'])
             
             #shuffle times to get a different fit every time
@@ -55,7 +50,7 @@ def main():
             sect = Section(name, times, duration)
             sections.append(sect)
 
-    #sort by shortest time, and then longest length
+    #sort by least number of sections, and then longest length
     sections.sort(key=lambda sect: (len(sect.timings), -duration))
 
     for section in sections:
@@ -64,16 +59,20 @@ def main():
         if queue: schedule = finalizeSection(queue)
 
         if schedule == None:
-            #can add feature to try again ignoring constraints: 
-            #try to add back the classes that were kicked out
-            #due to a convenience constraint, and add them at 
-            #the end of the times array (so that they are 
-            #biased to be not picked). Then try to refit. 
-            #if still doesn't work, then impossible. 
+            '''
+            can add feature to try again ignoring constraints: 
+            try to add back the classes that were kicked out
+            due to a convenience constraint, and add them at 
+            the end of the times array (so that they are 
+            biased to be not picked). Then try to refit. 
+            if still doesn't work, then impossible. 
+            '''
 
-            print("Schedule is impossible to fit")
-            print("Tried to fit " + str(sections))
-            print("Failed at " + str(section))
+            print("\n\nSchedule is impossible to fit")
+            # print("Tried to fit")
+            # print([str(sect[0]) for sect in sections])
+            # # print("Tried to fit " + str(sections))
+            print("\nFailed at " + str(section))
             return
         else:
             #reset all timesLeft for courses in schedule
@@ -109,6 +108,9 @@ def populateSchedule(parentSchedule, section, queue) -> Schedule:
     
     return None
 
+#Take a time off the queue, try to fit it, and if it 
+#works without causing a clash, return the candidate
+# schedule and and we're done fitting this section. 
 def finalizeSection(queue) -> Schedule:
     while queue:
         currSched = queue.popleft()

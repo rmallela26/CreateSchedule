@@ -20,4 +20,3 @@ class Section:
 
     def __str__(self):
         return (f"[{self.name}]: {self.time}")
-        # print("[" + self.name + "]: " + self.time)
